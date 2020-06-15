@@ -93,17 +93,12 @@ def get_other_player(my_room: room.room, name: str):
     return my_room.all_players[name]
 
 
-def compute_score(my_room: room.room, player: playa.playa = None, indexes: list = None):
+def compute_score(my_room: room.room):
     scores_dictionary = {}
 
-    if player is not None:
-        player, score = player_score(player=player, indexes=indexes)
+    for player in my_room.all_players.values():
+        player, score = player_score(player=player)
         scores_dictionary[player] = score
-
-    else:
-        for player in my_room.all_players.values():
-            player, score = player_score(player=player)
-            scores_dictionary[player] = score
     return scores_dictionary
 
 
@@ -118,6 +113,8 @@ def player_score(player: playa.playa, indexes: list = None):
         cards = player.cards
 
     for card in cards:
+        card = show_card(card)
+        print(card)
         if card == 'HK' or card == 'DK':
             continue
         elif card[-1] in power_dictionary:
@@ -185,3 +182,30 @@ def stage_changes(my_room: room.room, player: playa.playa, what: str, whose: str
 def power_function(my_room: room.room):
     new_player_list = my_room.players[-1:] + my_room.players[:-1]
     my_room.players = new_player_list
+
+
+def invoke_cameo(my_room: room.room, my_player: playa.playa):
+    my_room.cameo_invoked = my_player.name
+    player, score = player_score(player=my_player)
+
+    my_player.CHANGED = True
+    my_player.WHAT = "Cameo"
+    my_player.WHICH = score
+
+
+def execute_cameo(my_room: room.room):
+    scores_dictionary = compute_score(my_room=my_room)
+
+    min_score = 100
+    winner = None
+
+    for player, score in scores_dictionary.items():
+        player.WHICH = score
+
+        if score < min_score:
+            min_score = score
+            winner = player
+
+    my_room.winner = winner
+    my_room.print_result()
+    my_room.kill_me()

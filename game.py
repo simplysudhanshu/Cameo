@@ -33,21 +33,35 @@ time.sleep(1.5)
 
 
 def power_play(top_card):
-    if tools.show_card(top_card)[-1] == '7' or tools.show_card(top_card)[-1] == '8':
+    if tools.show_card(top_card)[1:] in ['7', '8']:
         my_index = int(input("Enter the index of the card you want to SEE : "))
         my_player.look(index=my_index)
         tools.stage_changes(my_room=my_room, player=my_player, what="looked", whose=my_player.name, which=str(my_index))
 
-    elif tools.show_card(top_card)[-1] == '9' or tools.show_card(top_card)[-1] == '0':
-        other_name = input("WHOSE card do you wanna SEE : ").lower()
-        other_index = int(input(f"INDEX of {other_name.upper()}'s card which you wanna see : "))
+    elif tools.show_card(top_card)[1:] in ['9', '10']:
+        other_index = 0
+
+        while True:
+            other_name = input("WHOSE card do you wanna SEE : ").lower()
+            if other_name != my_room.cameo_invoked:
+                other_index = int(input(f"INDEX of {other_name.upper()}'s card which you wanna see : "))
+                break
+            else:
+                print(f"-> {other_name.upper()} has invoked {colors.red}CAMEO{colors.ENDC}. You can't mess with that player.\n")
+                continue
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
         other_player.look(index=other_index)
         tools.stage_changes(my_room=my_room, player=my_player, what="looked", whose=other_name, which=str(other_index))
 
     elif tools.show_card(top_card)[-1] == 'J':
-        other_name = input("WHOSE cards do you wanna SHUFFLE : ").lower()
+        while True:
+            other_name = input("WHOSE cards do you wanna SHUFFLE : ").lower()
+            if other_name != my_room.cameo_invoked:
+                break
+            else:
+                print(f"-> {other_name.upper()} has invoked {colors.red}CAMEO{colors.ENDC}. You can't mess with that player.\n")
+                continue
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
         other_player.shuffle()
@@ -56,8 +70,17 @@ def power_play(top_card):
         tools.stage_changes(my_room=my_room, player=my_player, what="shuffled", whose=other_name)
 
     elif tools.show_card(top_card)[-1] == 'Q':
-        other_name = input("WHOSE card do you wanna SWAP with one of yours : ").lower()
-        other_index = int(input(f"INDEX of {other_name.upper()}'s card which you wanna swap : "))
+        other_index = 0
+        while True:
+            other_name = input("WHOSE card do you wanna SWAP with one of yours : ").lower()
+            if other_name != my_room.cameo_invoked:
+                other_index = int(input(f"INDEX of {other_name.upper()}'s card which you wanna swap : "))
+                break
+            else:
+                print(
+                    f"-> {other_name.upper()} has invoked {colors.red}CAMEO{colors.ENDC}. You can't mess with that player.\n")
+                continue
+
         my_index = int(input(f"INDEX of YOUR card which you wanna swap : "))
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
@@ -70,8 +93,17 @@ def power_play(top_card):
         tools.stage_changes(my_room=my_room, player=my_player, what="swapped", whose=other_name, which=f"{my_index},{other_index}")
 
     elif tools.show_card(top_card)[-1] == 'K':
-        other_name = input("WHOSE card do you wanna COMPARE & SWAP with one of yours : ").lower()
-        other_index = int(input(f"INDEX of {other_name}'s card which you wanna swap : "))
+        other_index = 0
+        while True:
+            other_name = input("WHOSE card do you wanna COMPARE & SWAP with one of yours : ").lower()
+            if other_name != my_room.cameo_invoked:
+                other_index = int(input(f"INDEX of {other_name}'s card which you wanna swap : "))
+                break
+            else:
+                print(
+                    f"-> {other_name.upper()} has invoked {colors.red}CAMEO{colors.ENDC}. You can't mess with that player.\n")
+                continue
+
         my_index = int(input(f"INDEX of YOUR card which you wanna swap : "))
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
@@ -144,7 +176,10 @@ while True:
     else:
         first_player = my_room.players[0]
 
-    if first_player == my_player.name:
+    if first_player == my_room.cameo_invoked:
+        tools.execute_cameo(my_room=my_room)
+
+    elif first_player == my_player.name:
         current_player = my_room.players[0]
         time.sleep(1.5)
         print(f"TURN : {my_room.players[0]}")
@@ -216,14 +251,18 @@ while True:
                         tools.lol_burn(my_room=my_room, my_player=my_player)
 
                 else:
-                    score = tools.compute_score(my_room=my_room, player=my_player, indexes=cards)
+                    player, score = tools.player_score(player=my_player, indexes=cards)
 
-                    if score[my_player] == int(tools.show_card(my_room.stack[-1])[1:]):
+                    if score == int(tools.show_card(my_room.stack[-1])[1:]):
                         tools.execute_burn(my_room=my_room, my_player=my_player, indexes=cards)
                     else:
                         tools.lol_burn(my_room=my_room, my_player=my_player)
 
                 my_room.update_individual_player(player=[my_player])
+
+            elif in_game == 3:
+                tools.invoke_cameo(my_room=my_room, my_player=my_player)
+
         else:
             print(f"You just got a {colors.red}POWER CARD!{colors.ENDC}  -> {colors.BOLD}{tools.show_card(power_card)}{colors.ENDC}\n")
             power_play(top_card=power_card)
