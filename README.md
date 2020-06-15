@@ -14,7 +14,7 @@ either update your chrome via the link above, or get appropriate chromedriver` [
 
 1. Each player gets 5 cards, from which you are allowed to see the first two cards.
 2. At each turn, you can pick a card from the deck and swap with any of your cards, or you can `burn` a set of your cards, whose total matches the score of the card on top of the stack. (:grey_exclamation:Face cards can be burnt using face cards only.)
-3. There are a set of **Power Cards**:
+3. There are a set of **Power Cards**: (These powers should be availed whenever you place a power card on stack)
     1) *7 / 8* - You can see any one of your cards.
     2) *9 / 10* - You can see any one card of someone esle.
     3) *Jack [J]* - You can shuffle the cards of anyone without looking at their cards.
