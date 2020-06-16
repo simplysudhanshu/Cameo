@@ -1,16 +1,16 @@
-import random
 import time
 import colors
 
-original_deck = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10', 'HJ', 'HQ', 'HK',
-                 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'DJ', 'DQ', 'DK',
-                 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'CJ', 'CQ', 'CK',
-                 'S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9', 'S10', 'SJ', 'SQ', 'SK']                         # 12, 25, 38, 51
+original_deck = ['\u2665 A', '\u2665 2', '\u2665 3', '\u2665 4', '\u2665 5', '\u2665 6', '\u2665 7', '\u2665 8', '\u2665 9', '\u2665 10', '\u2665 J', '\u2665 Q', '\u2665 K',
+                 '\u2666 A', '\u2666 2', '\u2666 3', '\u2666 4', '\u2666 5', '\u2666 6', '\u2666 7', '\u2666 8', '\u2666 9', '\u2666 10', '\u2666 J', '\u2666 Q', '\u2666 K',
+                 '\u2663 A', '\u2663 2', '\u2663 3', '\u2663 4', '\u2663 5', '\u2663 6', '\u2663 7', '\u2663 8', '\u2663 9', '\u2663 10', '\u2663 J', '\u2663 Q', '\u2663 K',
+                 '\u2660 A', '\u2660 2', '\u2660 3', '\u2660 4', '\u2660 5', '\u2660 6', '\u2660 7', '\u2660 8', '\u2660 9', '\u2660 10', '\u2660 J', '\u2660 Q', '\u2660 K']
+# KINGS: 12, 25, 38, 51
 
-power_deck = ['H7', 'H8', 'H9', 'H10', 'HJ', 'HQ', 'HK',
-              'D7', 'D8', 'D9', 'D10', 'DJ', 'DQ', 'DK',
-              'C7', 'C8', 'C9', 'C10', 'CJ', 'CQ', 'CK',
-              'S7', 'S8', 'S9', 'S10', 'SJ', 'SQ', 'SK']
+power_deck = ['\u2665 7', '\u2665 8', '\u2665 9', '\u2665 10', '\u2665 J', '\u2665 Q', '\u2665 K',
+              '\u2666 7', '\u2666 8', '\u2666 9', '\u2666 10', '\u2666 J', '\u2666 Q', '\u2666 K',
+              '\u2663 7', '\u2663 8', '\u2663 9', '\u2663 10', '\u2663 J', '\u2663 Q', '\u2663 K',
+              '\u2660 7', '\u2660 8', '\u2660 9', '\u2660 10', '\u2660 J', '\u2660 Q', '\u2660 K']
 
 power_dictionary = {'J': 11, 'Q': 12, 'K': 13}
 
@@ -19,7 +19,7 @@ class playa:
     def __init__(self, name: str, cards: list):
         self.name = name
         self.cards = cards
-        self.cards_index = [self.cards.index(x) for x in self.cards]
+        self.cards_index = [self.cards.index(x)+1 for x in self.cards]
 
         self.CHANGED = False
         self.WHAT = None
@@ -32,15 +32,12 @@ class playa:
         return original
 
     def look(self, index: int):
-        print(f"\n{colors.purple}-> {self.name.upper()}'s CARD {index} : {original_deck[int(self.cards[index])]}{colors.ENDC}", end='')
+        print(f"\n{colors.purple}-> {self.name.upper()}'s CARD {index+1} : {original_deck[int(self.cards[index])]}{colors.ENDC}", end='')
         time.sleep(4)
         for i in range(20):
             print('\b', end='')
 
         print(f"{colors.purple}That's all the time you get, kid.{colors.ENDC}")
-
-    def shuffle(self):
-        random.shuffle(self.cards)
 
     def update_cards(self, cards: list):
         self.cards = cards
@@ -48,7 +45,7 @@ class playa:
 
         for index, card in enumerate(cards):
             if card != '_':
-                new_indexes.append(index)
+                new_indexes.append(index+1)
         self.cards_index = new_indexes
 
     def show_cards(self):

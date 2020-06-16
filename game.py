@@ -5,7 +5,6 @@ import colors
 in_room = False
 my_room = None
 my_player = None
-# power_card = None
 
 print(f"\nSome {colors.UNDERLINE}RULES{colors.ENDC} before we get into it :\n--\n")
 time.sleep(1.5)
@@ -33,12 +32,12 @@ time.sleep(1.5)
 
 
 def power_play(top_card):
-    if tools.show_card(top_card)[1:] in ['7', '8']:
+    if tools.show_card(top_card)[2:] in ['7', '8']:
         my_index = int(input("Enter the index of the card you want to SEE : "))
-        my_player.look(index=my_index)
+        my_player.look(index=my_index-1)
         tools.stage_changes(my_room=my_room, player=my_player, what="looked", whose=my_player.name, which=str(my_index))
 
-    elif tools.show_card(top_card)[1:] in ['9', '10']:
+    elif tools.show_card(top_card)[2:] in ['9', '10']:
         other_index = 0
 
         while True:
@@ -62,7 +61,7 @@ def power_play(top_card):
                     break
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
-        other_player.look(index=other_index)
+        other_player.look(index=other_index-1)
         tools.stage_changes(my_room=my_room, player=my_player, what="looked", whose=other_name, which=str(other_index))
 
     # elif tools.show_card(top_card)[-1] == 'J':
@@ -96,9 +95,9 @@ def power_play(top_card):
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
 
-        temp_card = other_player.cards[other_index]
-        other_player.swap(card=my_player.cards[my_index], index=other_index)
-        my_player.swap(card=temp_card, index=my_index)
+        temp_card = other_player.cards[other_index-1]
+        other_player.swap(card=my_player.cards[my_index-1], index=other_index-1)
+        my_player.swap(card=temp_card, index=my_index-1)
 
         my_room.update_individual_player(player=[other_player, my_player])
         tools.stage_changes(my_room=my_room, player=my_player, what="swapped", whose=other_name, which=f"{my_index},{other_index}")
@@ -119,14 +118,14 @@ def power_play(top_card):
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
 
-        print(f"\n{colors.purple}{other_name.upper()} card {other_index} : {tools.show_card(other_player.cards[other_index])}{colors.ENDC}")
-        print(f"{colors.purple}YOUR card {my_index} : {tools.show_card(my_player.cards[my_index])}{colors.ENDC}")
+        print(f"\n{colors.purple}{other_name.upper()} card {other_index} : {tools.show_card(other_player.cards[other_index-1])}{colors.ENDC}")
+        print(f"{colors.purple}YOUR card {my_index} : {tools.show_card(my_player.cards[my_index-1])}{colors.ENDC}")
         swap_option = input("Do you want to SWAP them ? (yes/no) -> ").lower()
 
         if swap_option == 'yes':
-            temp_card = other_player.cards[other_index]
-            other_player.swap(card=my_player.cards[my_index], index=other_index)
-            my_player.swap(card=temp_card, index=my_index)
+            temp_card = other_player.cards[other_index-1]
+            other_player.swap(card=my_player.cards[my_index-1], index=other_index-1)
+            my_player.swap(card=temp_card, index=my_index-1)
 
             my_room.update_individual_player(player=[other_player, my_player])
             tools.stage_changes(my_room=my_room, player=my_player, what="looked,swapped", whose=other_name,
@@ -234,7 +233,7 @@ while True:
 
             elif card_option == 2:
                 index = int(input("Enter the number of the card you want to SWAP : "))
-                player_card = my_player.swap(card=new_card, index=index)
+                player_card = my_player.swap(card=new_card, index=index-1)
 
                 # if tools.show_card(player_card) in tools.power_deck:
                 #     my_room.stack.append(player_card)
@@ -250,15 +249,15 @@ while True:
                 power_play(top_card=new_card)
 
         elif in_game == 2:
-            cards = input("Enter the numbers of cards you want to BURN. <use commas to separate them> :")
+            cards = input("Enter the indexes of cards you want to BURN. <use commas to separate them> :")
             if len(cards) > 0:
                 cards = cards.split(",")
             else:
                 cards = [cards]
 
-            if tools.show_card(my_room.stack[-1])[1:] in ['J', 'Q', 'K']:
+            if tools.show_card(my_room.stack[-1])[2:] in ['J', 'Q', 'K']:
                 if len(cards) == 1:
-                    if tools.show_card(my_player.cards[int(cards[0])])[1:] == tools.show_card(my_room.stack[-1])[1:]:
+                    if tools.show_card(my_player.cards[int(cards[0])-1])[2:] == tools.show_card(my_room.stack[-1])[2:]:
                         tools.execute_burn(my_room=my_room, my_player=my_player, indexes=cards)
                     else:
                         tools.lol_burn(my_room=my_room, my_player=my_player)
@@ -268,7 +267,7 @@ while True:
             else:
                 player, score = tools.player_score(player=my_player, indexes=cards)
 
-                if score == int(tools.show_card(my_room.stack[-1])[1:]):
+                if score == int(tools.show_card(my_room.stack[-1])[2:]):
                     tools.execute_burn(my_room=my_room, my_player=my_player, indexes=cards)
                 else:
                     tools.lol_burn(my_room=my_room, my_player=my_player)
