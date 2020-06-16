@@ -10,3 +10,17 @@ Basic Requirements:
 either update your chrome via the link above, or get appropriate chromedriver` [here.](https://chromedriver.chromium.org/)
 ***
 *Rules of CAMEO game :*
+> Motive : Minimise the score of your cards.
+
+1. Each player gets 5 cards, from which you are allowed to see the first two cards.
+2. At each turn, you can pick a card from the deck and swap with any of your cards, or you can `burn` a set of your cards, whose total matches the score of the card on top of the stack. (:grey_exclamation:Face cards can be burnt using face cards only.)
+3. There are a set of **Power Cards**: (These powers should be availed whenever you place a power card on stack)
+    1) *7 / 8* - You can see any one of your cards.
+    2) *9 / 10* - You can see any one card of someone esle.
+    3) *Jack [J]* - You can shuffle the cards of anyone without looking at their cards.
+    4) *Queen [Q]* - You can swap any one of your cards with one card of anyone else, without look at the cards.
+    5) *King [K]* - You can look one card of your cards and one card of anyone else and swap them if you want.
+4. While calculating the scores, both the *Red Kings (Diamond and Heart)* have 0 value.
+5. If you think you have the lowest score amongst all the players, you can invoke CAMEO!, upone which all the other players will be allowed to play one hnad each and at the end of whole circle, scores will be calculated for every player. In this last round, no player can look, swap or shuffle the cards of the player who has invoked cameo.
+
+> The player with lowest score is declared WINNER!
