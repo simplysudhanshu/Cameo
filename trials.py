@@ -123,3 +123,8 @@ import colors
 #
 #
 # trial('s', 'swapped')
+a = ['simply', 'prince of persia']
+max_length = len(max(a, key=len))
+
+for item in a:
+    print(f"{item:>{max_length}} : 1")
