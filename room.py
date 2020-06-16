@@ -324,7 +324,7 @@ class room:
                     comment += f"{self.players[-1].upper()} just looked and swapped one of their own cards with a {name.upper()}'s card."
                 elif '[4m' in cards and name != self.players[-1]:
                     comment += f"{self.players[-1].upper()} just looked one of {name.upper()}'s card, but did not swap."
-                    
+
         to_print += f"{comment}{colors.ENDC}"
         self.changes_dictionary.clear()
         return to_print
