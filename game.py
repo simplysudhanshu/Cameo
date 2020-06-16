@@ -119,8 +119,8 @@ def power_play(top_card):
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
 
-        print(f"\n{colors.purple}{other_name.upper()} card {other_index} : {other_player.cards[other_index]}{colors.ENDC}")
-        print(f"{colors.purple}YOUR card {my_index} : {my_player.cards[my_index]}{colors.ENDC}")
+        print(f"\n{colors.purple}{other_name.upper()} card {other_index} : {tools.show_card(other_player.cards[other_index])}{colors.ENDC}")
+        print(f"{colors.purple}YOUR card {my_index} : {tools.show_card(my_player.cards[my_index])}{colors.ENDC}")
         swap_option = input("Do you want to SWAP them ? (yes/no) -> ").lower()
 
         if swap_option == 'yes':

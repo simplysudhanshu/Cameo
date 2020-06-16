@@ -116,8 +116,6 @@ def player_score(player: playa.playa, indexes: list = None):
         return player, 0
 
     for card in cards:
-        card = show_card(card)
-        print(card)
         if card == 'HK' or card == 'DK':
             continue
         elif card[-1] in power_dictionary:

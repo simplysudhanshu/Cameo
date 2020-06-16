@@ -8,8 +8,8 @@ import playa
 import time
 
 options = Options()
-options.add_argument('--headless')
-options.add_argument('--disable-gpu')
+# options.add_argument('--headless')
+# options.add_argument('--disable-gpu')
 
 original_deck = playa.original_deck
 
