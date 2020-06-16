@@ -5,7 +5,7 @@ import colors
 in_room = False
 my_room = None
 my_player = None
-power_card = None
+# power_card = None
 
 print(f"\nSome {colors.UNDERLINE}RULES{colors.ENDC} before we get into it :\n--\n")
 time.sleep(1.5)
@@ -49,6 +49,17 @@ def power_play(top_card):
             else:
                 print(f"-> {other_name.upper()} has invoked {colors.red}CAMEO{colors.ENDC}. You can't mess with that player.\n")
                 continue
+
+        if other_name == my_player.name:
+            print(f"-> You can't see your own card with these powers.\n")
+
+            while True:
+                other_name = input("WHOSE card do you wanna SEE : ").lower()
+                if other_name == my_player.name:
+                    print(f"-> You can't see your own card with these powers.\n")
+                    continue
+                else:
+                    break
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
         other_player.look(index=other_index)
@@ -182,90 +193,94 @@ while True:
     elif first_player == my_player.name:
         current_player = my_room.players[0]
         time.sleep(1.5)
-        print(f"TURN : {my_room.players[0]}")
         print(my_room)
 
-        if power_card is None:
-            in_game = int(input("1. New card from deck\n"
-                                "2. Burn\n"
-                                "3. CAMEO !\n"
-                                "-> "))
+        # if power_card is None:
 
-            if in_game == 1:
-                new_card = my_room.deck.pop(0)
+        in_game = int(input("1. New card from deck\n"
+                            "2. Burn\n"
+                            "3. CAMEO !\n"
+                            "-> "))
 
-                if len(my_room.deck) == 0:
-                    my_room.deck = tools.shuffle(deck=my_room.stack)
-                    my_room.stack = []
+        if in_game == 1:
+            new_card = my_room.deck.pop(0)
 
-                print(f"\nnew card : {colors.BOLD}{tools.show_card(new_card)}{colors.ENDC}")
+            if len(my_room.deck) == 0:
+                my_room.deck = tools.shuffle(deck=my_room.stack)
+                my_room.stack = []
 
-                if tools.show_card(new_card) not in tools.power_deck:
-                    card_option = int(input("1. Do nothing\n"
-                                            "2. Replace with one of yours\n"
-                                            "-> "))
+            print(f"\nnew card : {colors.BOLD}{tools.show_card(new_card)}{colors.ENDC}")
 
-                else:
-                    card_option = int(input(f"{colors.red}POWER CARD !{colors.ENDC}\n"
-                                            "1. Do nothing\n"
-                                            "2. Replace with one of yours\n"
-                                            "3. Avail powers\n"
-                                            "-> "))
+            if tools.show_card(new_card) not in tools.power_deck:
+                card_option = int(input("1. Do nothing\n"
+                                        "2. Replace with one of yours\n"
+                                        "-> "))
 
-                if card_option == 1:
-                    if tools.show_card(new_card) in tools.power_deck:
-                        print("\n-\\(-.-)/-")
-                        time.sleep(0.5)
-                        print(f"Listen here, you little shit.   THIS IS A POWER CARD. You get powers. {colors.BOLD}USE THE POWERS.{colors.ENDC}\n")
-                        power_play(top_card=new_card)
-                    else:
-                        my_room.stack.append(new_card)
+            else:
+                card_option = int(input(f"{colors.red}POWER CARD !{colors.ENDC}\n"
+                                        "1. Do nothing\n"
+                                        "2. Replace with one of yours\n"
+                                        "3. Avail powers\n"
+                                        "-> "))
 
-                elif card_option == 2:
-                    index = int(input("Enter the number of the card you want to SWAP : "))
-                    player_card = my_player.swap(card=new_card, index=index)
+            if card_option == 1:
+                # if tools.show_card(new_card) in tools.power_deck:
+                #     print("\n-\\(-.-)/-")
+                #     time.sleep(0.5)
+                #     print(f"Listen here, you little shit.   THIS IS A POWER CARD. You get powers. {colors.BOLD}USE THE POWERS.{colors.ENDC}\n")
+                #     power_play(top_card=new_card)
+                # else:
+                my_room.stack.append(new_card)
 
-                    if tools.show_card(player_card) in tools.power_deck:
-                        my_room.stack.append(player_card)
-                        power_card = player_card
-                        tools.power_function(my_room=my_room)
+            elif card_option == 2:
+                index = int(input("Enter the number of the card you want to SWAP : "))
+                player_card = my_player.swap(card=new_card, index=index)
 
-                    else:
-                        my_room.update_individual_player(player=[my_player])
-                        my_room.stack.append(player_card)
-                    tools.stage_changes(my_room=my_room, player=my_player, what="swapped", whose=my_player.name, which=str(index))
+                # if tools.show_card(player_card) in tools.power_deck:
+                #     my_room.stack.append(player_card)
+                #     power_card = player_card
+                #     tools.power_function(my_room=my_room)
+                #
+                # else:
+                my_room.update_individual_player(player=[my_player])
+                my_room.stack.append(player_card)
+                tools.stage_changes(my_room=my_room, player=my_player, what="swapped", whose=my_player.name, which=str(index))
 
-                elif card_option == 3:
-                    power_play(top_card=new_card)
+            elif card_option == 3:
+                power_play(top_card=new_card)
 
-            elif in_game == 2:
-                cards = input("Enter the numbers of cards you want to BURN. <use commas to separate them> :").split(",")
+        elif in_game == 2:
+            cards = input("Enter the numbers of cards you want to BURN. <use commas to separate them> :")
+            if len(cards) > 0:
+                cards = cards.split(",")
+            else:
+                cards = [cards]
 
-                if tools.show_card(my_room.stack[-1])[1:] in ['J', 'Q', 'K']:
-                    if len(cards) == 1:
-                        if tools.show_card(my_player.cards[int(cards[0])])[1:] == tools.show_card(my_room.stack[-1])[1:]:
-                            tools.execute_burn(my_room=my_room, my_player=my_player, indexes=cards)
-                        else:
-                            tools.lol_burn(my_room=my_room, my_player=my_player)
-                    else:
-                        tools.lol_burn(my_room=my_room, my_player=my_player)
-
-                else:
-                    player, score = tools.player_score(player=my_player, indexes=cards)
-
-                    if score == int(tools.show_card(my_room.stack[-1])[1:]):
+            if tools.show_card(my_room.stack[-1])[1:] in ['J', 'Q', 'K']:
+                if len(cards) == 1:
+                    if tools.show_card(my_player.cards[int(cards[0])])[1:] == tools.show_card(my_room.stack[-1])[1:]:
                         tools.execute_burn(my_room=my_room, my_player=my_player, indexes=cards)
                     else:
                         tools.lol_burn(my_room=my_room, my_player=my_player)
+                else:
+                    tools.lol_burn(my_room=my_room, my_player=my_player)
 
-                my_room.update_individual_player(player=[my_player])
+            else:
+                player, score = tools.player_score(player=my_player, indexes=cards)
 
-            elif in_game == 3:
-                tools.invoke_cameo(my_room=my_room, my_player=my_player)
+                if score == int(tools.show_card(my_room.stack[-1])[1:]):
+                    tools.execute_burn(my_room=my_room, my_player=my_player, indexes=cards)
+                else:
+                    tools.lol_burn(my_room=my_room, my_player=my_player)
 
-        else:
-            print(f"You just got a {colors.red}POWER CARD!{colors.ENDC}  -> {colors.BOLD}{tools.show_card(power_card)}{colors.ENDC}\n")
-            power_play(top_card=power_card)
+            my_room.update_individual_player(player=[my_player])
+
+        elif in_game == 3:
+            tools.invoke_cameo(my_room=my_room, my_player=my_player)
+
+        # else:
+        #     print(f"You just got a {colors.red}POWER CARD!{colors.ENDC}  -> {colors.BOLD}{tools.show_card(power_card)}{colors.ENDC}\n")
+        #     power_play(top_card=power_card)
 
         my_room.update_room()
 
