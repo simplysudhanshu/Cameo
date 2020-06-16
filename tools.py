@@ -112,6 +112,9 @@ def player_score(player: playa.playa, indexes: list = None):
     else:
         cards = player.cards
 
+    if len(cards) == 0:
+        return player, 0
+
     for card in cards:
         card = show_card(card)
         print(card)
@@ -179,9 +182,9 @@ def stage_changes(my_room: room.room, player: playa.playa, what: str, whose: str
             player.WHICH = which
 
 
-def power_function(my_room: room.room):
-    new_player_list = my_room.players[-1:] + my_room.players[:-1]
-    my_room.players = new_player_list
+# def power_function(my_room: room.room):
+#     new_player_list = my_room.players[-1:] + my_room.players[:-1]
+#     my_room.players = new_player_list
 
 
 def invoke_cameo(my_room: room.room, my_player: playa.playa):
