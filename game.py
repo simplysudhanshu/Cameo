@@ -65,22 +65,22 @@ def power_play(top_card):
         other_player.look(index=other_index)
         tools.stage_changes(my_room=my_room, player=my_player, what="looked", whose=other_name, which=str(other_index))
 
-    elif tools.show_card(top_card)[-1] == 'J':
-        while True:
-            other_name = input("WHOSE cards do you wanna SHUFFLE : ").lower()
-            if other_name != my_room.cameo_invoked:
-                break
-            else:
-                print(f"-> {other_name.upper()} has invoked {colors.red}CAMEO{colors.ENDC}. You can't mess with that player.\n")
-                continue
+    # elif tools.show_card(top_card)[-1] == 'J':
+    #     while True:
+    #         other_name = input("WHOSE cards do you wanna SHUFFLE : ").lower()
+    #         if other_name != my_room.cameo_invoked:
+    #             break
+    #         else:
+    #             print(f"-> {other_name.upper()} has invoked {colors.red}CAMEO{colors.ENDC}. You can't mess with that player.\n")
+    #             continue
+    #
+    #     other_player = tools.get_other_player(my_room=my_room, name=other_name)
+    #     other_player.shuffle()
+    #
+    #     my_room.update_individual_player(player=[other_player])
+    #     tools.stage_changes(my_room=my_room, player=my_player, what="shuffled", whose=other_name)
 
-        other_player = tools.get_other_player(my_room=my_room, name=other_name)
-        other_player.shuffle()
-
-        my_room.update_individual_player(player=[other_player])
-        tools.stage_changes(my_room=my_room, player=my_player, what="shuffled", whose=other_name)
-
-    elif tools.show_card(top_card)[-1] == 'Q':
+    elif tools.show_card(top_card)[-1] in ['J', 'Q']:
         other_index = 0
         while True:
             other_name = input("WHOSE card do you wanna SWAP with one of yours : ").lower()

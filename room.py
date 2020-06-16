@@ -8,8 +8,8 @@ import playa
 import time
 
 options = Options()
-# options.add_argument('--headless')
-# options.add_argument('--disable-gpu')
+options.add_argument('--headless')
+options.add_argument('--disable-gpu')
 
 original_deck = playa.original_deck
 
@@ -308,12 +308,12 @@ class room:
                 if '[4m' in cards:
                     comment += f"{self.players[-1].upper()} just saw {name.upper()}'s... card."
 
-        elif stack_top[-1] == 'J':
-            for name, cards in self.changes_dictionary.items():
-                if '[91m' in cards and name != self.players[-1]:
-                    comment += f"{self.players[-1].upper()} just SHUFFLED {name.upper()}'s cards."
+        # elif stack_top[-1] == 'J':
+        #     for name, cards in self.changes_dictionary.items():
+        #         if '[91m' in cards and name != self.players[-1]:
+        #             comment += f"{self.players[-1].upper()} just SHUFFLED {name.upper()}'s cards."
 
-        elif stack_top[-1] == 'Q':
+        elif stack_top[-1] in ['J','Q']:
             for name, cards in self.changes_dictionary.items():
                 if '[91m' in cards and name != self.players[-1]:
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards with a {name.upper()}'s card."
