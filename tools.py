@@ -46,7 +46,6 @@ def list_indices(deck: list):
 
 def init_game():
     current_deck = shuffle(original_deck)
-    # current_deck = shuffle(power_deck)
 
     my_room = room.room()
     my_room.publisher(current_status=0, players=[''], player_status='', stack_status=[''],
@@ -108,7 +107,7 @@ def player_score(player: playa.playa, indexes: list = None):
     cards = []
     if indexes is not None:
         for index in room.remove_blanks(indexes):
-            cards.append(original_deck[int(player.cards[int(index)])])
+            cards.append(original_deck[int(player.cards[int(index)-1])])
     else:
         cards = player.cards
 
@@ -121,7 +120,7 @@ def player_score(player: playa.playa, indexes: list = None):
         elif card[-1] in power_dictionary:
             player_sum += power_dictionary[card[-1]]
         else:
-            player_sum += int(card[1:])
+            player_sum += int(card[2:])
 
     return player, player_sum
 
@@ -130,12 +129,12 @@ def execute_burn(my_room: room.room, my_player: playa.playa, indexes: list):
     stack = []
 
     for index in indexes:
-        card = my_player.cards[int(index)]
+        card = my_player.cards[int(index)-1]
         stack.append(card)
         my_player.cards_index.remove(int(index))
 
     for index in range(len(my_player.cards)):
-        if index not in my_player.cards_index:
+        if index+1 not in my_player.cards_index:
             my_player.cards[int(index)] = '_'
 
     my_room.stack.extend(sorted(stack, reverse=True))
@@ -147,10 +146,10 @@ def execute_burn(my_room: room.room, my_player: playa.playa, indexes: list):
 def lol_burn(my_room: room.room, my_player: playa.playa):
     my_player.cards.append(my_room.deck.pop(0))
 
-    if max(my_player.cards_index) > 5:
+    if max(my_player.cards_index) > 6:
         my_player.cards_index.append(max(my_player.cards_index) + 1)
     else:
-        my_player.cards_index.append(5)
+        my_player.cards_index.append(6)
 
     print(f"\nMISMATCHED !\nInstead of your cards, {colors.red}YOU JUST GOT BURNED.{colors.ENDC} Here's an extra card for your troubles.")
     stage_changes(my_room=my_room, player=my_player, what="burn0", whose=my_player.name)

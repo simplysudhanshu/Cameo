@@ -69,6 +69,7 @@ class room:
 
         self.cameo_invoked = None
         self.winner = None
+        self.max_player = 0
 
         if join:
             self.room_status = self.data[0]
@@ -77,6 +78,8 @@ class room:
 
             self.current_status = self.room_status.split(",")[0]
             self.players = remove_blanks([*self.room_status.split(",")[1].split("-")])
+            if len(self.players) > 0:
+                self.max_player = len(max(self.players, key=len))
 
             self.stack = remove_blanks([*self.cards_status.split(",")[0].split("-")])
             self.deck = remove_blanks([*self.cards_status.split(",")[1].split("-")])
@@ -157,6 +160,9 @@ class room:
 
         self.current_status = self.room_status.split(",")[0]
         self.players = remove_blanks([*self.room_status.split(",")[1].split("-")])
+        if len(self.players) > 0:
+            self.max_player = len(max(self.players, key=len))
+
         self.changes_dictionary.clear()
 
         for index, player in enumerate(self.players):
@@ -246,9 +252,9 @@ class room:
 
         for player in self.all_players.values():
             if player == self.winner:
-                to_print += f"|->  {colors.green}{colors.BOLD}{player.name} :  {player.WHICH}{colors.ENDC}\n"
+                to_print += f"|->  {colors.green}{colors.BOLD}{player.name:>{self.max_player}} :  {player.WHICH}{colors.ENDC}\n"
             else:
-                to_print += f"|->  {player.name} :  {player.WHICH}\n"
+                to_print += f"|->  {player.name:>{self.max_player}} :  {player.WHICH}\n"
 
         print(to_print)
 
@@ -264,7 +270,7 @@ class room:
         to_print += "--------------------------------------\n"
         to_print += f"|             {colors.BOLD}THE ROOM{colors.ENDC}               |\n"
         to_print += "--------------------------------------\n"
-        to_print += f"->           {colors.blue}stack :  {colors.UNDERLINE}{stack_top}{colors.ENDC}           <-\n"
+        to_print += f"->           {colors.blue}stack :  {stack_top}{colors.ENDC}           <-\n"
         to_print += "--------------------------------------\n"
 
         for player in self.all_players.values():
@@ -272,17 +278,17 @@ class room:
                 changed.append(player.name)
 
                 if player.name == self.players[0]:
-                    to_print += f"|->  {player.name} :  {self.changes_dictionary[player.name]}\n"
+                    to_print += f"|->  {player.name:>{self.max_player}} :  {self.changes_dictionary[player.name]}\n"
                 else:
-                    to_print += f"|    {player.name} :  {self.changes_dictionary[player.name]}\n"
+                    to_print += f"|    {player.name:>{self.max_player}} :  {self.changes_dictionary[player.name]}\n"
             else:
                 if player.name == self.players[0]:
-                    to_print += f"|->  {player.name} :  {player.show_cards()}\n"
+                    to_print += f"|->  {player.name:>{self.max_player}} :  {player.show_cards()}\n"
                 else:
                     if player.name == self.cameo_invoked:
-                        to_print += f"|    {colors.yellow}{colors.BOLD}{player.name} :  {player.show_cards()}{colors.ENDC}\n"
+                        to_print += f"|    {colors.yellow}{colors.BOLD}{player.name:>{self.max_player}} :  {player.show_cards()}{colors.ENDC}\n"
                     else:
-                        to_print += f"|    {player.name} :  {player.show_cards()}\n"
+                        to_print += f"|    {player.name:>{self.max_player}} :  {player.show_cards()}\n"
 
             player.CHANGED = False
             player.WHAT = None
@@ -295,25 +301,16 @@ class room:
         if self.cameo_invoked == self.players[-1]:
             comment += f"{self.cameo_invoked.upper()} HAS JUST INVOKED {colors.BOLD}CAMEO!{colors.ENDC} {colors.red}BRACE FOR WAR !{colors.ENDC}\n"
 
-        if stack_top[1:] in ['7', '8']:
+        if stack_top[2:] in ['7', '8']:
             if self.players[-1] in self.changes_dictionary and '[4m' in self.changes_dictionary[self.players[-1]]:
                 comment += f"{self.players[-1].upper()} just saw their own... card."
 
-        #     elif '[91m' in self.changes_dictionary[self.players[-1]]:
-        #         if self.changes_dictionary[self.players[-1]].index('[0m') - self.changes_dictionary[self.players[-1]].index('[91m') > :
-        #          comment += f"{self.players[-1].upper()} just tried a {colors.red} BURN !{colors.ENDC}"
-
-        elif stack_top[1:] in ['9', '10']:
+        elif stack_top[2:] in ['9', '10']:
             for name, cards in self.changes_dictionary.items():
                 if '[4m' in cards:
                     comment += f"{self.players[-1].upper()} just saw {name.upper()}'s... card."
 
-        # elif stack_top[-1] == 'J':
-        #     for name, cards in self.changes_dictionary.items():
-        #         if '[91m' in cards and name != self.players[-1]:
-        #             comment += f"{self.players[-1].upper()} just SHUFFLED {name.upper()}'s cards."
-
-        elif stack_top[-1] in ['J','Q']:
+        elif stack_top[-1] in ['J', 'Q']:
             for name, cards in self.changes_dictionary.items():
                 if '[91m' in cards and name != self.players[-1]:
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards with a {name.upper()}'s card."
