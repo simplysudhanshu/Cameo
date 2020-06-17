@@ -107,9 +107,10 @@ def player_score(player: playa.playa, indexes: list = None):
     cards = []
     if indexes is not None:
         for index in room.remove_blanks(indexes):
-            cards.append(original_deck[int(player.cards[int(index)-1])])
+            cards.append(show_card([int(index)-1]))
     else:
-        cards = player.cards
+        for card in room.remove_blanks(player.cards):
+            cards.append(show_card(int(card)))
 
     if len(cards) == 0:
         return player, 0

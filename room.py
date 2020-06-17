@@ -160,6 +160,14 @@ class room:
 
         self.current_status = self.room_status.split(",")[0]
         self.players = remove_blanks([*self.room_status.split(",")[1].split("-")])
+
+        for index, player in enumerate(self.players):
+            if "_" in player:
+                first_player = player.split('_')[0]
+            else:
+                first_player = player
+            self.players[index] = first_player
+
         if len(self.players) > 0:
             self.max_player = len(max(self.players, key=len))
 
@@ -171,11 +179,11 @@ class room:
                 if '[' in line and '\033[' not in line:
                     line = line.replace('[', '\033[')
 
-                    self.changes_dictionary[name] = line
-                    self.players[index] = name
-
                 elif '[' not in line and len(line) < 4:
                     self.cameo_invoked = name
+
+                self.changes_dictionary[name] = line
+                self.players[index] = name
 
         self.stack = remove_blanks([*self.cards_status.split(",")[0].split("-")])
         self.deck = remove_blanks([*self.cards_status.split(",")[1].split("-")])
@@ -203,6 +211,10 @@ class room:
         for player in remove_blanks(players):
             player_details = player.split("-")
             player_details = remove_blanks(player_details)
+
+            if "_" in player_details[0]:
+                name, details = player_details[0].split("_")
+                player_details[0] = name
 
             if player_details[0] in players_dictionary:
                 new_player = players_dictionary[str(player_details[0])]
