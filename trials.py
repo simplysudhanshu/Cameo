@@ -123,8 +123,13 @@ import colors
 #
 #
 # trial('s', 'swapped')
-a = ['simply', 'prince of persia']
-max_length = len(max(a, key=len))
+# a = ['simply', 'prince of persia']
+# max_length = len(max(a, key=len))
+#
+# for item in a:
+#     print(f"{item:>{max_length}} : 1")
+upper_lines = "+----+"
 
-for item in a:
-    print(f"{item:>{max_length}} : 1")
+print(f"{upper_lines:>{17}}")
+print("New Card : | H4 |")
+print(f"{upper_lines:>{17}}")

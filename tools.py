@@ -107,7 +107,7 @@ def player_score(player: playa.playa, indexes: list = None):
     cards = []
     if indexes is not None:
         for index in room.remove_blanks(indexes):
-            cards.append(show_card([int(index)-1]))
+            cards.append(show_card(int(index)-1))
     else:
         for card in room.remove_blanks(player.cards):
             cards.append(show_card(int(card)))
@@ -187,11 +187,9 @@ def stage_changes(my_room: room.room, player: playa.playa, what: str, whose: str
 
 def invoke_cameo(my_room: room.room, my_player: playa.playa):
     my_room.cameo_invoked = my_player.name
-    player, score = player_score(player=my_player)
 
     my_player.CHANGED = True
     my_player.WHAT = "Cameo"
-    my_player.WHICH = score
 
 
 def execute_cameo(my_room: room.room):
