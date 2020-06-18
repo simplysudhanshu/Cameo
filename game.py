@@ -5,6 +5,8 @@ import colors
 in_room = False
 my_room = None
 my_player = None
+upper_lines = "+-----+"
+
 
 print(f"\nSome {colors.UNDERLINE}RULES{colors.ENDC} before we get into it :\n--\n")
 time.sleep(1.5)
@@ -196,7 +198,7 @@ while True:
 
         # if power_card is None:
 
-        in_game = int(input("1. New card from deck\n"
+        in_game = int(input("\n1. New card from deck\n"
                             "2. Burn\n"
                             "3. CAMEO !\n"
                             "-> "))
@@ -207,16 +209,17 @@ while True:
             if len(my_room.deck) == 0:
                 my_room.deck = tools.shuffle(deck=my_room.stack)
                 my_room.stack = []
-
-            print(f"\nnew card : {colors.BOLD}{tools.show_card(new_card)}{colors.ENDC}")
+            print(f"\n{upper_lines:>{18}}")
+            print(f"new card : | {colors.BOLD}{tools.show_card(new_card)}{colors.ENDC} |")
+            print(f"{upper_lines:>{18}}")
 
             if tools.show_card(new_card) not in tools.power_deck:
-                card_option = int(input("1. Do nothing\n"
+                card_option = int(input("\n1. Do nothing\n"
                                         "2. Replace with one of yours\n"
                                         "-> "))
 
             else:
-                card_option = int(input(f"{colors.red}POWER CARD !{colors.ENDC}\n"
+                card_option = int(input(f"\n{colors.red}POWER CARD !{colors.ENDC}\n"
                                         "1. Do nothing\n"
                                         "2. Replace with one of yours\n"
                                         "3. Avail powers\n"
