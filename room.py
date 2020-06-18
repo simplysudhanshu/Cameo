@@ -161,6 +161,22 @@ class room:
         self.current_status = self.room_status.split(",")[0]
         self.players = remove_blanks([*self.room_status.split(",")[1].split("-")])
 
+        self.changes_dictionary.clear()
+
+        for index, player in enumerate(self.players):
+            if "_" in player:
+                name, line = player.split('_')
+                if '[' in line and '\033[' not in line:
+                    line = line.replace('[', '\033[')
+
+                elif '[' not in line:
+                    self.cameo_invoked = name
+
+                self.changes_dictionary[name] = line
+                self.changes_dictionary['old count'] = len(self.all_players[name].cards)
+
+                self.players[index] = name
+
         for index, player in enumerate(self.players):
             if "_" in player:
                 first_player = player.split('_')[0]
@@ -171,20 +187,6 @@ class room:
         if len(self.players) > 0:
             self.max_player = len(max(self.players, key=len))
 
-        self.changes_dictionary.clear()
-
-        for index, player in enumerate(self.players):
-            if "_" in player:
-                name, line = player.split('_')
-                if '[' in line and '\033[' not in line:
-                    line = line.replace('[', '\033[')
-
-                elif '[' not in line and len(line) < 4:
-                    self.cameo_invoked = name
-
-                self.changes_dictionary[name] = line
-                self.players[index] = name
-
         self.stack = remove_blanks([*self.cards_status.split(",")[0].split("-")])
         self.deck = remove_blanks([*self.cards_status.split(",")[1].split("-")])
 
@@ -192,6 +194,7 @@ class room:
 
     def kill_me(self):
         self.refresh_flag = False
+        time.sleep(1)
         self.reader.close()
         self.writer.close()
 
@@ -246,10 +249,7 @@ class room:
 
         for player_name, player_object in self.all_players.items():
             if player_object.CHANGED:
-                if player_object.WHAT != 'Cameo':
-                    self.players[self.players.index(player_name)] = f"{player_name}_{player_object.show_cards()}"
-                else:
-                    self.players[self.players.index(player_name)] = f"{player_name}_{player_object.WHICH}"
+                self.players[self.players.index(player_name)] = f"{player_name}_{player_object.show_cards()}"
 
         self.publisher(current_status=self.current_status, players=self.players, player_status=self.player_status,
                        stack_status=self.stack, deck_status=self.deck)
@@ -264,9 +264,11 @@ class room:
 
         for player in self.all_players.values():
             if player == self.winner:
-                to_print += f"|->  {colors.green}{colors.BOLD}{player.name:>{self.max_player}} :  {player.WHICH}{colors.ENDC}\n"
+                to_print += f"{colors.green}{colors.BOLD}|->  {player.name:>{self.max_player}} :  {player.WHICH} - [{player.results()}]{colors.ENDC}\n"
             else:
-                to_print += f"|->  {player.name:>{self.max_player}} :  {player.WHICH}\n"
+                to_print += f"|->  {player.name:>{self.max_player}} :  {player.WHICH} - [{player.results()}]\n"
+
+        to_print += "--------------------------------------\n"
 
         print(to_print)
 
@@ -292,15 +294,15 @@ class room:
                 if player.name == self.players[0]:
                     to_print += f"|->  {player.name:>{self.max_player}} :  {self.changes_dictionary[player.name]}\n"
                 else:
-                    to_print += f"|    {player.name:>{self.max_player}} :  {self.changes_dictionary[player.name]}\n"
+                    if player.name == self.cameo_invoked:
+                        to_print += f"|    {colors.yellow}{colors.BOLD}{player.name:>{self.max_player}} :  {player.show_cards()}{colors.ENDC}\n"
+                    else:
+                        to_print += f"|    {player.name:>{self.max_player}} :  {self.changes_dictionary[player.name]}\n"
             else:
                 if player.name == self.players[0]:
                     to_print += f"|->  {player.name:>{self.max_player}} :  {player.show_cards()}\n"
                 else:
-                    if player.name == self.cameo_invoked:
-                        to_print += f"|    {colors.yellow}{colors.BOLD}{player.name:>{self.max_player}} :  {player.show_cards()}{colors.ENDC}\n"
-                    else:
-                        to_print += f"|    {player.name:>{self.max_player}} :  {player.show_cards()}\n"
+                    to_print += f"|    {player.name:>{self.max_player}} :  {player.show_cards()}\n"
 
             player.CHANGED = False
             player.WHAT = None
@@ -327,13 +329,33 @@ class room:
                 if '[91m' in cards and name != self.players[-1]:
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards with a {name.upper()}'s card."
 
+                elif '[91m' in cards and name == self.players[-1]:
+                    comment += f"{self.players[-1].upper()} just swapped one of their own cards."
+
         elif stack_top[-1] == 'K':
             for name, cards in self.changes_dictionary.items():
                 if '[91m' in cards and name != self.players[-1]:
                     comment += f"{self.players[-1].upper()} just looked and swapped one of their own cards with a {name.upper()}'s card."
+
                 elif '[4m' in cards and name != self.players[-1]:
                     comment += f"{self.players[-1].upper()} just looked one of {name.upper()}'s card, but did not swap."
 
+                elif '[91m' in cards and name == self.players[-1]:
+                    comment += f"{self.players[-1].upper()} just swapped one of their own cards."
+
+        else:
+            for name, cards in self.changes_dictionary.items():
+                if '[91m' in cards and name == self.players[-1]:
+                    comment += f"{self.players[-1].upper()} just swapped one of their own cards."
+
+                elif '[93m' in cards and name == self.players[-1]:
+                    if self.changes_dictionary['old count'] > len(self.all_players[name].cards):
+                        comment += f"{self.players[-1].upper()} just did a successful {colors.red}BURN!"
+                    else:
+                        comment += f"{self.players[-1].upper()} just tried a burn, & instead of their cards, " \
+                                   f"{colors.red}{self.players[-1].upper()} JUST GOT BURNED!"
+
         to_print += f"{comment}{colors.ENDC}"
+
         self.changes_dictionary.clear()
         return to_print
