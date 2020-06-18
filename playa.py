@@ -12,7 +12,7 @@ power_deck = ['\u2665 7', '\u2665 8', '\u2665 9', '\u2665 10', '\u2665 J', '\u26
               '\u2663 7', '\u2663 8', '\u2663 9', '\u2663 10', '\u2663 J', '\u2663 Q', '\u2663 K',
               '\u2660 7', '\u2660 8', '\u2660 9', '\u2660 10', '\u2660 J', '\u2660 Q', '\u2660 K']
 
-power_dictionary = {'J': 11, 'Q': 12, 'K': 13}
+power_dictionary = {'A': 1, 'J': 11, 'Q': 12, 'K': 13}
 
 
 class playa:
@@ -48,14 +48,17 @@ class playa:
                 new_indexes.append(index+1)
         self.cards_index = new_indexes
 
+    def results(self):
+        return ''.join(f'{original_deck[int(x)]}, ' for x in self.cards)[:-2]
+
     def show_cards(self):
         to_print = ''
 
         if self.CHANGED:
-            if 'burn' in self.WHAT or 'shuffle' in self.WHAT:
+            if 'burn' in self.WHAT:
                 if self.WHOSE == self.name:
                     to_print = to_print.join(f'{str(x)} ' for x in self.cards_index)
-                    to_print = f'{colors.red}{to_print}{colors.ENDC}'
+                    to_print = f'{colors.yellow}{to_print}{colors.ENDC}'
                 else:
                     to_print = to_print.join(f'{str(x)} ' for x in self.cards_index)
 
