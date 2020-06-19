@@ -35,34 +35,43 @@ time.sleep(1.5)
 
 def power_play(top_card):
     if tools.show_card(top_card)[2:] in ['7', '8']:
-        my_index = int(input("Enter the index of the card you want to SEE : "))
+
+        while True:
+            my_index = int(input(f"INDEX of {my_player.name.upper()}'s card which you wanna see : "))
+            if my_index not in my_player.cards_index:
+                print(f"-> Invalid card index for {my_player.name.upper()}.\n")
+                continue
+
+            else:
+                break
         my_player.look(index=my_index-1)
         tools.stage_changes(my_room=my_room, player=my_player, what="looked", whose=my_player.name, which=str(my_index))
 
     elif tools.show_card(top_card)[2:] in ['9', '10']:
-        other_index = 0
-
         while True:
             other_name = input("WHOSE card do you wanna SEE : ").lower()
-            if other_name != my_room.cameo_invoked:
-                other_index = int(input(f"INDEX of {other_name.upper()}'s card which you wanna see : "))
+            if other_name != my_room.cameo_invoked or other_name != my_player.name:
                 break
+
+            elif other_name == my_player.name:
+                print(f"-> You can't see your own card with these powers.\n")
+                continue
+
             else:
                 print(f"-> {other_name.upper()} has invoked {colors.red}CAMEO{colors.ENDC}. You can't mess with that player.\n")
                 continue
 
-        if other_name == my_player.name:
-            print(f"-> You can't see your own card with these powers.\n")
-
-            while True:
-                other_name = input("WHOSE card do you wanna SEE : ").lower()
-                if other_name == my_player.name:
-                    print(f"-> You can't see your own card with these powers.\n")
-                    continue
-                else:
-                    break
-
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
+
+        while True:
+            other_index = int(input(f"INDEX of {other_name.upper()}'s card which you wanna see : "))
+            if other_index not in other_player.cards_index:
+                print(f"-> Invalid card index for {other_player.name.upper()}.\n")
+                continue
+
+            else:
+                break
+
         other_player.look(index=other_index-1)
         tools.stage_changes(my_room=my_room, player=my_player, what="looked", whose=other_name, which=str(other_index))
 
@@ -82,12 +91,15 @@ def power_play(top_card):
     #     tools.stage_changes(my_room=my_room, player=my_player, what="shuffled", whose=other_name)
 
     elif tools.show_card(top_card)[-1] in ['J', 'Q']:
-        other_index = 0
         while True:
             other_name = input("WHOSE card do you wanna SWAP with one of yours : ").lower()
-            if other_name != my_room.cameo_invoked:
-                other_index = int(input(f"INDEX of {other_name.upper()}'s card which you wanna swap : "))
+            if other_name != my_room.cameo_invoked or other_name != my_player.name:
                 break
+
+            elif other_name == my_player.name:
+                print(f"-> You can't use these powers on your own card.\n")
+                continue
+
             else:
                 print(
                     f"-> {other_name.upper()} has invoked {colors.red}CAMEO{colors.ENDC}. You can't mess with that player.\n")
@@ -96,6 +108,20 @@ def power_play(top_card):
         my_index = int(input(f"INDEX of YOUR card which you wanna swap : "))
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
+
+        while True:
+            other_index = int(input(f"INDEX of {other_name.upper()}'s card which you wanna see : "))
+
+            if other_index not in other_player.cards_index:
+                print(f"-> Invalid card index for {other_player.name.upper()}.\n")
+                continue
+
+            if my_index not in my_player.cards_index:
+                print(f"-> Invalid card index for {my_player.name.upper()}\n")
+                continue
+
+            else:
+                break
 
         temp_card = other_player.cards[other_index-1]
         other_player.swap(card=my_player.cards[my_index-1], index=other_index-1)
@@ -105,12 +131,15 @@ def power_play(top_card):
         tools.stage_changes(my_room=my_room, player=my_player, what="swapped", whose=other_name, which=f"{my_index},{other_index}")
 
     elif tools.show_card(top_card)[-1] == 'K':
-        other_index = 0
         while True:
             other_name = input("WHOSE card do you wanna COMPARE & SWAP with one of yours : ").lower()
-            if other_name != my_room.cameo_invoked:
-                other_index = int(input(f"INDEX of {other_name}'s card which you wanna swap : "))
+            if other_name != my_room.cameo_invoked and other_name != my_player.name:
                 break
+
+            elif other_name == my_player.name:
+                print(f"-> You can't use these powers on your own card.\n")
+                continue
+
             else:
                 print(
                     f"-> {other_name.upper()} has invoked {colors.red}CAMEO{colors.ENDC}. You can't mess with that player.\n")
@@ -119,6 +148,20 @@ def power_play(top_card):
         my_index = int(input(f"INDEX of YOUR card which you wanna swap : "))
 
         other_player = tools.get_other_player(my_room=my_room, name=other_name)
+
+        while True:
+            other_index = int(input(f"INDEX of {other_name.upper()}'s card which you wanna see : "))
+
+            if other_index not in other_player.cards_index:
+                print(f"-> Invalid card index for {other_player.name.upper()}.\n")
+                continue
+
+            if my_index not in my_player.cards_index:
+                print(f"-> Invalid card index for {my_player.name.upper()}\n")
+                continue
+
+            else:
+                break
 
         print(f"\n{colors.purple}{other_name.upper()} card {other_index} : {tools.show_card(other_player.cards[other_index-1])}{colors.ENDC}")
         print(f"{colors.purple}YOUR card {my_index} : {tools.show_card(my_player.cards[my_index-1])}{colors.ENDC}")
@@ -176,6 +219,10 @@ while True:
         if in_room:
             my_room.kill_me()
         exit()
+
+    else:
+        print("Invalid input. TRY AGAIN.")
+        continue
 
 print("\n== INSIDE THE ROOM ==\n")
 current_player = my_player.name
@@ -251,6 +298,10 @@ while True:
             elif card_option == 3:
                 power_play(top_card=new_card)
 
+            else:
+                print("Invalid input. TRY AGAIN.")
+                continue
+
         elif in_game == 2:
             cards = input("Enter the indexes of cards you want to BURN. <use commas to separate them> :")
             if len(cards) > 0:
@@ -279,6 +330,10 @@ while True:
 
         elif in_game == 3:
             tools.invoke_cameo(my_room=my_room, my_player=my_player)
+
+        else:
+            print("Invalid input. TRY AGAIN.")
+            continue
 
         # else:
         #     print(f"You just got a {colors.red}POWER CARD!{colors.ENDC}  -> {colors.BOLD}{tools.show_card(power_card)}{colors.ENDC}\n")
