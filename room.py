@@ -313,8 +313,6 @@ class room:
         to_print += "--------------------------------------\n"
         comment = f"{colors.blue}"
 
-        print(f"CHANGES : {self.changes_dictionary}")
-
         if self.cameo_invoked == self.players[-1]:
             comment += f"{self.cameo_invoked.upper()} HAS JUST INVOKED {colors.BOLD}CAMEO!{colors.ENDC} {colors.red}BRACE FOR WAR !{colors.ENDC}\n"
 
@@ -327,7 +325,6 @@ class room:
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards."
 
                 elif name == self.players[-1] and '[93m' in cards:
-                    print("There's yellow")
                     if self.pre_burn > len(self.all_players[name].cards):
                         comment += f"{name.upper()} just did a successful {colors.red}BURN!"
                     else:
@@ -343,7 +340,6 @@ class room:
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards."
 
                 elif name == self.players[-1] and '[93m' in cards:
-                    print("There's yellow")
                     if self.pre_burn > len(self.all_players[name].cards):
                         comment += f"{name.upper()} just did a successful {colors.red}BURN!"
                     else:
@@ -359,7 +355,6 @@ class room:
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards."
 
                 elif name == self.players[-1] and '[93m' in cards:
-                    print("There's yellow")
                     if self.pre_burn > len(self.all_players[name].cards):
                         comment += f"{name.upper()} just did a successful {colors.red}BURN!"
                     else:
@@ -378,7 +373,6 @@ class room:
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards."
 
                 elif name == self.players[-1] and '[93m' in cards:
-                    print("There's yellow")
                     if self.pre_burn > len(self.all_players[name].cards):
                         comment += f"{name.upper()} just did a successful {colors.red}BURN!"
                     else:
@@ -387,14 +381,10 @@ class room:
 
         else:
             for name, cards in self.changes_dictionary.items():
-                print(f"name : {name}, cards : {cards}")
-                print(f"Self : {self.players[-1]}")
                 if name == self.players[-1] and '[91m' in cards:
-                    print("There's red")
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards."
 
                 elif name == self.players[-1] and '[93m' in cards:
-                    print("There's yellow")
                     if self.pre_burn > len(self.all_players[name].cards):
                         comment += f"{name.upper()} just did a successful {colors.red}BURN!"
                     else:
