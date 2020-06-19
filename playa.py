@@ -34,7 +34,7 @@ class playa:
     def look(self, index: int):
         print(f"\n{colors.purple}-> {self.name.upper()}'s CARD {index+1} : {original_deck[int(self.cards[index])]}{colors.ENDC}", end='')
         time.sleep(4)
-        for i in range(20):
+        for i in range(30):
             print('\b', end='')
 
         print(f"{colors.purple}That's all the time you get, kid.{colors.ENDC}")
@@ -56,11 +56,12 @@ class playa:
 
         if self.CHANGED:
             if 'burn' in self.WHAT:
-                if self.WHOSE == self.name:
-                    to_print = to_print.join(f'{str(x)} ' for x in self.cards_index)
-                    to_print = f'{colors.yellow}{to_print}{colors.ENDC}'
-                else:
-                    to_print = to_print.join(f'{str(x)} ' for x in self.cards_index)
+                to_print = to_print.join(f'{str(x)} ' for x in self.cards_index)
+                to_print = f'{colors.yellow}{to_print}{colors.ENDC}'
+
+            elif 'Cameo' in self.WHAT:
+                to_print = to_print.join(f'{str(x)} ' for x in self.cards_index)
+                to_print = f'{colors.yellow}{colors.BOLD}{to_print}{colors.ENDC}'
 
             else:
                 for index in self.cards_index:

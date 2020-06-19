@@ -141,7 +141,7 @@ def execute_burn(my_room: room.room, my_player: playa.playa, indexes: list):
     my_room.stack.extend(sorted(stack, reverse=True))
     print(f"\nAnd that's a {colors.red}BURN !{colors.ENDC}")
 
-    stage_changes(my_room=my_room, player=my_player, what="burn1", whose=my_player.name)
+    stage_changes(my_room=my_room, player=my_player, what="burn", whose=my_player.name)
 
 
 def lol_burn(my_room: room.room, my_player: playa.playa):
@@ -153,7 +153,7 @@ def lol_burn(my_room: room.room, my_player: playa.playa):
         my_player.cards_index.append(6)
 
     print(f"\nMISMATCHED !\nInstead of your cards, {colors.red}YOU JUST GOT BURNED.{colors.ENDC} Here's an extra card for your troubles.")
-    stage_changes(my_room=my_room, player=my_player, what="burn0", whose=my_player.name)
+    stage_changes(my_room=my_room, player=my_player, what="burn", whose=my_player.name)
 
 
 def stage_changes(my_room: room.room, player: playa.playa, what: str, whose: str, which: str = None):

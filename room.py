@@ -170,8 +170,8 @@ class room:
                 if '[' in line and '\033[' not in line:
                     line = line.replace('[', '\033[')
 
-                elif '[' not in line:
-                    self.cameo_invoked = name
+                    if '[1m' in line:
+                        self.cameo_invoked = name
 
                 self.changes_dictionary[name] = line
                 self.pre_burn = len(self.all_players[name].cards)
@@ -324,7 +324,7 @@ class room:
                 elif self.players[-1] in self.changes_dictionary and '[91m' in self.changes_dictionary[self.players[-1]]:
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards."
 
-                elif name == self.players[-1] and '[93m' in cards:
+                elif name == self.players[-1] and '[93m' in cards and '[1m' not in cards:
                     if self.pre_burn > len(self.all_players[name].cards):
                         comment += f"{name.upper()} just did a successful {colors.red}BURN!"
                     else:
