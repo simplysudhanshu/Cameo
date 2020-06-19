@@ -69,6 +69,7 @@ class room:
 
         self.cameo_invoked = None
         self.winner = None
+        self.pre_burn = None
         self.max_player = 0
 
         if join:
@@ -173,7 +174,7 @@ class room:
                     self.cameo_invoked = name
 
                 self.changes_dictionary[name] = line
-                self.changes_dictionary['old count'] = len(self.all_players[name].cards)
+                self.pre_burn = len(self.all_players[name].cards)
 
                 self.players[index] = name
 
@@ -312,17 +313,42 @@ class room:
         to_print += "--------------------------------------\n"
         comment = f"{colors.blue}"
 
+        print(f"CHANGES : {self.changes_dictionary}")
+
         if self.cameo_invoked == self.players[-1]:
             comment += f"{self.cameo_invoked.upper()} HAS JUST INVOKED {colors.BOLD}CAMEO!{colors.ENDC} {colors.red}BRACE FOR WAR !{colors.ENDC}\n"
 
         if stack_top[2:] in ['7', '8']:
-            if self.players[-1] in self.changes_dictionary and '[4m' in self.changes_dictionary[self.players[-1]]:
-                comment += f"{self.players[-1].upper()} just saw their own... card."
+            for name, cards in self.changes_dictionary.items():
+                if '[4m' in cards and name == self.players[-1]:
+                    comment += f"{name.upper()} just saw their own... card."
+
+                elif self.players[-1] in self.changes_dictionary and '[91m' in self.changes_dictionary[self.players[-1]]:
+                    comment += f"{self.players[-1].upper()} just swapped one of their own cards."
+
+                elif name == self.players[-1] and '[93m' in cards:
+                    print("There's yellow")
+                    if self.pre_burn > len(self.all_players[name].cards):
+                        comment += f"{name.upper()} just did a successful {colors.red}BURN!"
+                    else:
+                        comment += f"{name.upper()} just tried a burn, & instead of their cards, " \
+                                   f"{colors.red}{name.upper()} JUST GOT BURNED!"
 
         elif stack_top[2:] in ['9', '10']:
             for name, cards in self.changes_dictionary.items():
-                if '[4m' in cards:
+                if '[4m' in cards and name != self.players[-1]:
                     comment += f"{self.players[-1].upper()} just saw {name.upper()}'s... card."
+
+                elif '[91m' in cards and name == self.players[-1]:
+                    comment += f"{self.players[-1].upper()} just swapped one of their own cards."
+
+                elif name == self.players[-1] and '[93m' in cards:
+                    print("There's yellow")
+                    if self.pre_burn > len(self.all_players[name].cards):
+                        comment += f"{name.upper()} just did a successful {colors.red}BURN!"
+                    else:
+                        comment += f"{name.upper()} just tried a burn, & instead of their cards, " \
+                                   f"{colors.red}{name.upper()} JUST GOT BURNED!"
 
         elif stack_top[-1] in ['J', 'Q']:
             for name, cards in self.changes_dictionary.items():
@@ -331,6 +357,14 @@ class room:
 
                 elif '[91m' in cards and name == self.players[-1]:
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards."
+
+                elif name == self.players[-1] and '[93m' in cards:
+                    print("There's yellow")
+                    if self.pre_burn > len(self.all_players[name].cards):
+                        comment += f"{name.upper()} just did a successful {colors.red}BURN!"
+                    else:
+                        comment += f"{name.upper()} just tried a burn, & instead of their cards, " \
+                                   f"{colors.red}{name.upper()} JUST GOT BURNED!"
 
         elif stack_top[-1] == 'K':
             for name, cards in self.changes_dictionary.items():
@@ -343,17 +377,29 @@ class room:
                 elif '[91m' in cards and name == self.players[-1]:
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards."
 
+                elif name == self.players[-1] and '[93m' in cards:
+                    print("There's yellow")
+                    if self.pre_burn > len(self.all_players[name].cards):
+                        comment += f"{name.upper()} just did a successful {colors.red}BURN!"
+                    else:
+                        comment += f"{name.upper()} just tried a burn, & instead of their cards, " \
+                                   f"{colors.red}{name.upper()} JUST GOT BURNED!"
+
         else:
             for name, cards in self.changes_dictionary.items():
-                if '[91m' in cards and name == self.players[-1]:
+                print(f"name : {name}, cards : {cards}")
+                print(f"Self : {self.players[-1]}")
+                if name == self.players[-1] and '[91m' in cards:
+                    print("There's red")
                     comment += f"{self.players[-1].upper()} just swapped one of their own cards."
 
-                elif '[93m' in cards and name == self.players[-1]:
-                    if self.changes_dictionary['old count'] > len(self.all_players[name].cards):
-                        comment += f"{self.players[-1].upper()} just did a successful {colors.red}BURN!"
+                elif name == self.players[-1] and '[93m' in cards:
+                    print("There's yellow")
+                    if self.pre_burn > len(self.all_players[name].cards):
+                        comment += f"{name.upper()} just did a successful {colors.red}BURN!"
                     else:
-                        comment += f"{self.players[-1].upper()} just tried a burn, & instead of their cards, " \
-                                   f"{colors.red}{self.players[-1].upper()} JUST GOT BURNED!"
+                        comment += f"{name.upper()} just tried a burn, & instead of their cards, " \
+                                   f"{colors.red}{name.upper()} JUST GOT BURNED!"
 
         to_print += f"{comment}{colors.ENDC}"
 
